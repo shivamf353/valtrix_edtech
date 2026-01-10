@@ -101,8 +101,9 @@ if (!recentOtp || recentOtp.otp !== otp) {
     console.log(hashedPassword)
     const profile= await profilemodel.create({
         gender:null,
-        dateofbirth:null,
+        dateOfBirth:null,
         about:null,
+        contactNumber:null,
         image:null,
     })
      console.log("profile check" , profile)
@@ -153,7 +154,7 @@ if (!recentOtp || recentOtp.otp !== otp) {
 exports.login= async (req,res)=>{
     const {email,password}=req.body;
     try {
-        const user= await usermodel.findOne({email})
+        const user= await usermodel.findOne({email}).populate("additionalDetails").exec();
         console.log("backend login called")
         if(!user){
             console.log("no user found plese login")

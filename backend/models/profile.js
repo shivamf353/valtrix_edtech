@@ -3,13 +3,14 @@ const moongose = require("mongoose")
 const profileSchema = new moongose.Schema({
 
     gender:String,
-    dateofbirth:String,
+    dateOfBirth:Date,
     about:String,
-    contectno:{
-        type:Object,
-        trim:true
-      
-    },
+    contactNumber: [{
+        type: String,
+        trim: true,
+        minlength: 10,
+        maxlength: 12,
+    }],
     image:String
 })
 

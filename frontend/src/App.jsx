@@ -16,6 +16,7 @@ import{getUserDetails} from "./apiService/apiCallCode/userapi"
 import Dashboard from './pages/Dashboard'
 import PrivateRoute from './compotents/auth/PrivateRoute'
 import MyProfile from './compotents/Dashboard/myprofile'
+import Settings from './pages/settings/settings'
 import OpenRoute from './compotents/auth/openroute'
 
 
@@ -97,6 +98,7 @@ function App() {
             <Route element= {<PrivateRoute> <Dashboard/> </PrivateRoute>}>
                   {/* Route for all users */}
                   <Route path="dashboard/my-profile" element={<MyProfile />} />
+                  <Route path="dashboard/Settings" element={<Settings />} />
                
             </Route>
 

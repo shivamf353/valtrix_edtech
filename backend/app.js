@@ -5,6 +5,8 @@ const profile =require("./routers/profile")
 const course =require ("./routers/course")
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const fileUpload = require("express-fileupload");
+const {cloudinaryConnect}=require("./config/cloudinary")
 
 
 
@@ -14,8 +16,19 @@ app.use(cors({
   credentials: true                 // if you need cookies/auth headers
 }));
 app.use(express.json());
-conectdb();
 app.use(cookieParser())
+
+app.use(
+	fileUpload({
+		useTempFiles: true,
+		tempFileDir: "/tmp/",
+	})
+);
+
+//config 
+cloudinaryConnect();
+conectdb();
+
 app.use(express.urlencoded({ extended: true }));
 app.use ("/api/auth", loginrouter)
 app.use("/api/profile",profile)
