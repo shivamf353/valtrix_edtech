@@ -15,16 +15,12 @@ try {
         })
      
     }
-
     else{
-        console.log("check y")
         let newcategory= await Categorymodel.create({
             name,
             discription,
-            courses:null
+            courses:[]
         })
-       
-        console.log("new category created")
         res.status(200).json({
             massage:"new category created",
             success:true,
@@ -41,9 +37,6 @@ try {
 }
 }
 
-
-
-//show all tags 
 
 exports.showallcategory = async(req, res)=>{
     try {
@@ -75,6 +68,8 @@ exports.categorypagedetials= async(req,res) => {
             success: false,
         })
     )
+
+    // it cary out other cattegry detials;
     const otherCategoryDetails = await Categorymodel.findOne({_id: {$ne:categoryid}})
                                                     .populate("courses")
                                                     .exec()

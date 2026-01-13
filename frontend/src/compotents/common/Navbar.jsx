@@ -42,10 +42,10 @@ const Navbar = () => {
 
   async function fatchCategry(){
     try {
-      console.log( categories.CATEGORIES_API );
+      // console.log( categories.CATEGORIES_API );
       const res= await apiconector("GET" , categories.CATEGORIES_API )
       setsublinks(res.data.allcategory)
-       console.log("categary fatched in nevbar-catlog");
+      //  console.log("categary fatched in nevbar-catlog");
       
     } 
     catch (error) {

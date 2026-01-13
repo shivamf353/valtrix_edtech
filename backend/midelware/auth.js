@@ -55,13 +55,13 @@ exports.isstudent=(req,res, next)=>{
 
 exports.isadmin=(req,res, next)=>{
    try {
-     if(req.user.accounttype !== "admin"){
-        res.status(299).json({
+    if(req.user.accounttype !== "admin"){
+       return res.status(299).json({
             massage:"protected routes for admin only",
             success:false
         })
-        next()
     }
+    next();
    } catch (error) {
      res.status(299).json({
             massage:"error in acount type",error,
@@ -75,15 +75,18 @@ exports.isadmin=(req,res, next)=>{
 
 exports.isteacher=(req,res, next)=>{
    try {
-     if(req.user.accounttype !== "teacher"){
-        res.status(299).json({
+    // console.log(req.user);
+     if(req.user.acounttype !== 'Instructor'){
+        return res.status(403).json({
             massage:"protected routes for teacher only",
             success:false
-        })
+            })
+        }
+        console.log("instructor verified");
         next()
-    }
+        
    } catch (error) {
-     res.status(299).json({
+     res.status(500).json({
             massage:"error in acount type",error,
             success:false
         })

@@ -1,85 +1,109 @@
 const coursemodel = require("../models/course")
-const categorymodel = require ("../models/category")
-const usermodel = require("../models/user")
-const { uplodetocloudinary } = require("../utils/uploder")
-const { populate } = require("../models/ratingAndReviws")
+const Categorymodel = require("../models/category");
+const usermodel = require("../models/user-model")
+const sectionmodel=require("../models/section")
+const { uploadImageToCloudinary } = require("../utils/uploder")
 
 
 
 
-/// create cource
 
-exports.createcourse=async (req ,res)=>{
+/// create cource 
+exports.createCourse=async (req ,res)=>{
+  
+let{ courseName,
+  courseDescription,
+  price,
+  tag,
+  whatYouWillLearn,
+  category,
+  status,
+  instructions}=req.body;
 
-    let {coursename,coursediscription,whattolearn,price,category}=req.body;
-    const imagefile = req.file.thumbnail
+//   console.log(req.body)
+// console.log(req.files.thumbnailImage)
+const imagefile = req.files.thumbnailImage;
 try {
-        //validation 
-
-    if( !coursename || !coursediscription || !whattolearn || !category ){
-        res.status(400).json({
-            massage:"not all fields or field",
+ //validation 
+    if( !courseName || !courseDescription || !whatYouWillLearn || !category || !imagefile ){
+       return res.status(400).json({
+            message:"not all fields or field",
             success: true
         })
     }
+    console.log("create course backend-- 1")
     // check for istructor
      const userid = req.user.id;
-     const instructor = await usermodel.findById({userid});
-     console.log("instructor detials", instructor)
+     const instructor = await usermodel.findById(userid);
+    //  console.log("instructor detials", instructor)
 
      if (!instructor) {
         console.log ("no instructor find")
-        res.status(400).json({
-            massage:"no instructor find",
+        return res.status(400).json({
+            message:"no instructor find",
             success: false
         })
      }
-    
-    // tag validation
-    const categorydetial =await categorymodel.findOne({tagname})
-     if (!categorydetial) {
-        console.log ("no category detials find")
-        res.status(400).json({
-            massage:"no category detials find",
+
+    const categorydetail = await Categorymodel.findOne({_id:category})
+     if (!categorydetail) {
+        console.log ("no category details find")
+        return res.status(400).json({
+            message:"no category details find",
             success: false 
         })
         }
+    // console.log("categery details", categorydetail)
 
     // uploade image
 
-    const thumbnailimage = await uplodetocloudinary(imagefile , process.env.folder_name)
+    const thumbnailimage = await uploadImageToCloudinary(imagefile , process.env.folder_name)
+    // console.log("cloudnery image string url--",thumbnailimage)
 
     // new cource
 
+   
     const newcourse = await coursemodel.create({
-            coursename,
-            coursediscription, 
+            courseName,
+            courseDescription, 
             price, 
-            whattolearn,
-            thumbnail: thumbnailimage, 
+            whatYouWillLearn,
+            thumbnail: thumbnailimage.url, 
             teacher: instructor._id,
-            category: categorydetial._id     
+            category: categorydetail._id,  
+            coursecontent: [], 
     })
-
+        // console.log("new uploded cource--" , newcourse)
 
     // add this cource to instructor shema
-    await usermodel.findByIdAndaUpdate(
-        {_id:instructor._id},
+    const updateduser= await usermodel.findByIdAndUpdate(
+        instructor._id,
         {$push:{courses: newcourse._id}},
         {new:true} 
     )
 
-    // update tag schema 
+    // console.log("course id updated in user---", updateduser)
 
-    await categorymodel.findByIdAndUpdate(
-        {_id: categorydetial._id},
-        {$push:{ courses: newcourse_id}},
-        {new:true}
-        )
+    // update tag schema 
+    console.log("course id updated in cattegery--",categorydetail._id,newcourse._id)
+    console.log("Updating category...");
+
+const updatedCategory = await Categorymodel.findOneAndUpdate(
+  { _id: categorydetail._id },
+  { $addToSet: { courses: newcourse._id } },
+  { new: true }
+);
+
+if (!updatedCategory) {
+  throw new Error("Category update failed");
+}
+
+console.log("Category after update:", updatedCategory);
+
     
     //return
 
-    res.status(200).json({
+    return res.status(200).json({
         massage:"new course created",
         success:true,
         data: newcourse
@@ -90,11 +114,51 @@ catch (error) {
         res.status(500).json({
             success:true,
             massage:"new cource not created",
-            error: error.massage
+            error: error.message
         })
 }
 }
 
+exports.createSubsection=async(req,res)=>{
+    try {
+    const{sectionname, courseid}=req.body;
+    if(!sectionname || !courseid){
+        return res.status(403).json({
+            message: "all data not send",
+            success:false
+        })
+    }
+    const newsection= await sectionmodel.create({
+        sectionname,
+        subsection: []
+    })
+
+    const updatecourse = await coursemodel.findByIdAndUpdate(courseid,
+        {$push: {coursecontent:newsection._id}},
+        {new: true }
+    );
+    await updatecourse.populate({
+                            path:"coursecontent",
+                            populate:{
+                                path:"subsection"
+                            }
+                        })
+
+    return res.status(200).json({
+        success:true,
+        message:"new section added in course",
+        data:updatecourse
+    })
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"section not created",
+            error
+        })
+    }
+
+
+}
 /// code far showing all coursess to the interface 
 exports.showallcourses= async (res,req) => {
     try {

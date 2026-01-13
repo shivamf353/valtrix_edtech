@@ -18,6 +18,7 @@ import PrivateRoute from './compotents/auth/PrivateRoute'
 import MyProfile from './compotents/Dashboard/myprofile'
 import Settings from './pages/settings/settings'
 import OpenRoute from './compotents/auth/openroute'
+import AddCourse from "./pages/AddCourse"
 
 
 function App() {
@@ -99,6 +100,19 @@ function App() {
                   {/* Route for all users */}
                   <Route path="dashboard/my-profile" element={<MyProfile />} />
                   <Route path="dashboard/Settings" element={<Settings />} />
+
+                  {/* Route only for Instructors */}
+                  {user?.accountType === "Instructor" && (
+                    <>
+                      {/* <Route path="dashboard/instructor" element={<Instructor />} />
+                      <Route path="dashboard/my-courses" element={<MyCourses />} /> */}
+                      <Route path="dashboard/add-course" element={<AddCourse/>} />
+                      {/* <Route
+                        path="dashboard/edit-course/:courseId"
+                        element={<EditCourse />}
+                      /> */}
+                    </>
+                   )}
                
             </Route>
 

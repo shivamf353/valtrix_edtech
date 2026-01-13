@@ -1,10 +1,10 @@
 const moongose = require("mongoose");
-const category = require("./category");
+
 
 const courseShema= new moongose.Schema({
 
-    coursename:String,
-    coursediscription:String,
+    courseName:String,
+    courseDescription:String,
     price:Number,
     thumbnail:String,
     teacher:{
@@ -13,7 +13,7 @@ const courseShema= new moongose.Schema({
         required: true
     },
 
-    whattolearn:{
+    whatYouWillLearn:{
         type:String,
     },
     coursecontent:[
@@ -24,20 +24,21 @@ const courseShema= new moongose.Schema({
         }
     ],
 
-    tag:String,
     category:{
         type:moongose.Schema.Types.ObjectId,
         ref:"categorymodel",
     },
 
-    ratingAndReviws:{
+    ratingAndReviws:[{
         type:moongose.Schema.Types.ObjectId,
         ref:"ratingAndReviwsmodel",
-    },
-    studentenroled:{
+    }],
+    studentenroled:[
+        {
         type:moongose.Schema.Types.ObjectId,
         ref:"usermodel",
-    },
+        }
+    ],
 
 
 })

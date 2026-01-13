@@ -1,5 +1,7 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
+
+
 // AUTH ENDPOINTS
 export const endpoints = {
   SENDOTP_API: BASE_URL + "/auth/sendotp",
@@ -51,7 +53,7 @@ export const ratingsEndpoints = {
 
 // CATAGORIES API
 export const categories = {
-  CATEGORIES_API: BASE_URL + "/course/showallcategry",
+  CATEGORIES_API: BASE_URL + "/course/showAllCategories",
 }
 
 // CATALOG PAGE DATA
